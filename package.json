@@ -1,0 +1,82 @@
+{
+  "name": "react-electron-template",
+  "version": "0.0.2",
+  "description": "A Electron app with react.",
+  "author": "qianlfeg<805042956@qq.com>",
+  "private": true,
+  "main": "public/electron.js",
+  "homepage": ".",
+  "scripts": {
+    "start": "react-scripts start",
+    "react-build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "build": "npm run react-build && rm -rf dist && electron-builder",
+    "dev": "concurrently \"BROWSER=none npm start\" \"wait-on http://localhost:3000 && NODE_ENV=development electron .\""
+  },
+  "build": {
+    "productName": "react-electron-template",
+    "appId": "example",
+    "asar": true,
+    "dmg": {
+      "contents": [
+        {
+          "x": 410,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        },
+        {
+          "x": 130,
+          "y": 150,
+          "type": "file"
+        }
+      ]
+    },
+    "mac": {
+      "icon": "icons/icon.icns"
+    },
+    "win": {
+      "icon": "icons/icon.ico"
+    },
+    "linux": {
+      "icon": "icons"
+    },
+    "files": [
+      {
+        "from": "./",
+        "to": "./",
+        "filter": [
+          "**/*",
+          "!node_modules"
+        ]
+      }
+    ],
+    "directories": {
+      "buildResources": "public"
+    }
+  },
+  "devDependencies": {
+    "concurrently": "^4.1.0",
+    "electron": "^5.0.2",
+    "electron-builder": "^20.27.1",
+    "install": "^0.12.2",
+    "npm": "^6.9.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-scripts": "3.0.1",
+    "wait-on": "^3.2.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
