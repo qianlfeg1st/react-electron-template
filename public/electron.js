@@ -1,39 +1,58 @@
-// 引入electron并创建一个Browserwindow
-const {app, BrowserWindow} = require('electron')
-const path = require('path')
-const url = require('url')
+const { app, BrowserWindow, Menu, Tray } = require('electron')
+// const path = require('path')
+// const url = require('url')
+const winURL = process.env.NODE_ENV === 'development' ? `http://localhost:3000/#/` : `file://${__dirname}/index.html#/`
+global.__static = `${__dirname}/static/`
 
 // 保持window对象的全局引用,避免JavaScript对象被垃圾回收时,窗口被自动关闭.
 let mainWindow
+let tray = null
 
 function createWindow () {
-//创建浏览器窗口,宽高自定义具体大小你开心就好
-mainWindow = new BrowserWindow({width: 1600, height: 1200})
 
-  // 加载应用----适用于 react 开发时项目
-  mainWindow.loadURL('http://localhost:3000/');
+  // console.log('__static', global.__static)
+  tray = new Tray(`${global.__static}images/tomato.png`)
 
-  // 加载应用----适用于 react 项目
-  // mainWindow.loadURL(url.format({
-  //   pathname: path.join(__dirname, './build/index.html'),
-  //   protocol: 'file:',
-  //   slashes: true
-  // }))
+  tray.setToolTip('This is my application.')
 
-  // 打开开发者工具，默认不打开
-  mainWindow.webContents.openDevTools()
+  tray.setContextMenu(Menu.buildFromTemplate([
+    {
+      label: '二维码生成器',
+      accelerator: 'Command+Z',
+      click: res => {
 
-  // 关闭window时触发下列事件.
-  mainWindow.on('closed', function () {
-    mainWindow = null
-  })
+        mainWindow = new BrowserWindow({
+          width: 1000,
+          height: 800,
+          webPreferences: {
+            nodeIntegration: true
+          }
+        })
+
+        mainWindow.webContents.openDevTools()
+
+        console.log('winURL', winURL)
+
+        mainWindow.loadURL(`${winURL}qrcode`)
+        // mainWindow.loadURL(`http://localhost:3000/#/qrcode`)
+      }
+    },
+    {
+      type: 'separator'
+    },
+    {
+      label: '测试',
+      role: 'front'
+    }
+  ]))
+
 }
 
 // 当 Electron 完成初始化并准备创建浏览器窗口时调用此方法
 app.on('ready', createWindow)
 
 // 所有窗口关闭时退出应用.
-app.on('window-all-closed', function () {
+app.on('window-all-closed', () => {
   // macOS中除非用户按下 `Cmd + Q` 显式退出,否则应用与菜单栏始终处于活动状态.
   if (process.platform !== 'darwin') {
     app.quit()
@@ -46,5 +65,3 @@ app.on('activate', function () {
     createWindow()
   }
 })
-
-// 你可以在这个脚本中续写或者使用require引入独立的js文件.
